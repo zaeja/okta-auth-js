@@ -1559,6 +1559,21 @@
   optionalDependencies:
     fsevents "*"
 
+"@okta/okta-signin-widget@^5.3.1":
+  version "5.3.1"
+  resolved "https://registry.yarnpkg.com/@okta/okta-signin-widget/-/okta-signin-widget-5.3.1.tgz#114c38a27a640e9c3e3a97cae8e3be20f8418b67"
+  integrity sha512-BK9+81c79AXDjwspJkr0mFft1NczYTle4/kz1Cbp4+DdoM+ISyP7UEGNrSJWYBrexEsnHO0w7jNnqhOR36fypg==
+  dependencies:
+    "@babel/polyfill" "^7.10.1"
+    "@babel/runtime" "^7.10.3"
+    cross-fetch "^3.0.4"
+    handlebars "^4.5.3"
+    q "1.4.1"
+    u2f-api-polyfill "0.4.3"
+    underscore "1.8.3"
+  optionalDependencies:
+    fsevents "*"
+
 "@peculiar/asn1-schema@^2.0.12", "@peculiar/asn1-schema@^2.0.26":
   version "2.0.27"
   resolved "https://registry.yarnpkg.com/@peculiar/asn1-schema/-/asn1-schema-2.0.27.tgz#1ee3b2b869ff3200bcc8ec60e6c87bd5a6f03fe0"
@@ -4867,7 +4882,7 @@ debug@4, debug@^4.0.1, debug@^4.1.0, debug@^4.1.1:
   dependencies:
     ms "^2.1.1"
 
-debug@4.3.1:
+debug@4.3.1, debug@~4.3.1:
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.1.tgz#f0d229c505e0c6d8c49ac553d1b13dc183f6b2ee"
   integrity sha512-doEwdvm4PCeK4K3RQN2ZC2BYUBaxwLARCqZmMjtF8a51J2Rb0xpVloFRnCODwqjpwnAoao4pelN8l3RJdv3gRQ==
@@ -4880,13 +4895,6 @@ debug@=3.1.0:
   integrity sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==
   dependencies:
     ms "2.0.0"
-
-debug@~4.3.1:
-  version "4.3.1"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.1.tgz#f0d229c505e0c6d8c49ac553d1b13dc183f6b2ee"
-  integrity sha512-doEwdvm4PCeK4K3RQN2ZC2BYUBaxwLARCqZmMjtF8a51J2Rb0xpVloFRnCODwqjpwnAoao4pelN8l3RJdv3gRQ==
-  dependencies:
-    ms "2.1.2"
 
 decamelize@^1.0.0, decamelize@^1.1.1, decamelize@^1.2.0:
   version "1.2.0"

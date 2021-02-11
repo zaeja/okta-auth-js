@@ -42,7 +42,7 @@ const Form = `
     <option value="lax">Lax</option>
     <option value="strict">Strict</option>
   </select><br/>
-  <label for="_siwVersion">Sign-in Widget version</label><input id="_siwVersion" name="_siwVersion" type="text" /><br/>
+  <label for="_siwVersion">Sign-in Widget version (leave blank for bundled version)</label><input id="_siwVersion" name="_siwVersion" type="text" /><br/>
   <label for="_forceRedirect">Force redirect (for SPA applications)?</label><br/>
   <input id="_forceRedirect-on" name="_forceRedirect" type="radio" value="true"/>YES<br/>
   <input id="_forceRedirect-off" name="_forceRedirect" type="radio" value="false"/>NO<br/>
