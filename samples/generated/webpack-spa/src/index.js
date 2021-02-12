@@ -138,7 +138,9 @@ function renderUnauthenticated() {
 }
 
 function handleLoginRedirect() {
-  // The URL contains a code, `parseFromUrl` will exchange the code for tokens
+  // TODO: isInteractionRequired
+  
+  // If the URL contains a code, `parseFromUrl` will grab it and exchange the code for tokens
   return authClient.token.parseFromUrl().then(function (res) {
     endAuthFlow(res.tokens); // save tokens
   }).catch(function(error) {
@@ -205,7 +207,7 @@ function showRedirectButton() {
 function showSigninWidget() {
     // Create an instance of the signin widget
     var signIn = new OktaSignIn({
-      baseUrl: config.issuer.split('oauth2')[0],
+      baseUrl: config.issuer.split('/oauth2')[0],
       clientId: config.clientId,
       redirectUri: config.redirectUri,
       useInteractionCodeFlow: config.useInteractionCodeFlow,
