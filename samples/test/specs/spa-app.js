@@ -1,5 +1,13 @@
 import SpaApp from '../pageobjects/SpaApp';
-import { startApp, getSampleConfig, loginRedirect, loginDirect, loginWidget, clickSocialLoginButtons } from '../util';
+import {
+  startApp,
+  toQueryString,
+  getSampleConfig,
+  loginRedirect,
+  loginDirect,
+  loginWidget,
+  clickSocialLoginButtons
+} from '../util';
 
 const sampleConfig = getSampleConfig();
 
@@ -37,16 +45,27 @@ describe('spa-app: ' + sampleConfig.name, () => {
     });
   }
 
-  if (sampleConfig.signinForm) {
+  if (sampleConfig.signinWidget) {
     it('can login using a self-hosted widget', async () => {
       await startApp(SpaApp, { flow: 'widget', requireUserSession: true });
       await loginWidget();
       await SpaApp.assertUserInfo();
       await SpaApp.logoutRedirect();
     });
+
+    it('shows the widget when receiving error=interaction_required on redirect', async () => {
+      await startApp(SpaApp, { flow: 'widget' });
+      await browser.url(sampleConfig.redirectPath + toQueryString({
+        error: 'interaction_required'
+      }));
+
+      await loginWidget();
+      await SpaApp.assertUserInfo();
+      await SpaApp.logoutRedirect();
+    });
   }
 
-  if (sampleConfig.signinForm) {
+  if (sampleConfig.signinWidget) {
     it('show social login buttons in self-hosted widget', async () => {
       await startApp(SpaApp, { flow: 'widget', requireUserSession: true, idps: 'Facebook:111 Google:222' });
       await clickSocialLoginButtons();

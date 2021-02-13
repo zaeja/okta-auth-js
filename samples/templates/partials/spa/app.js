@@ -138,7 +138,9 @@ function renderUnauthenticated() {
 }
 
 function handleLoginRedirect() {
-  // TODO: isInteractionRequired
+  if (authClient.isInteractionRequired()) {
+    return beginAuthFlow(); // widget will resume transaction
+  }
   
   // If the URL contains a code, `parseFromUrl` will grab it and exchange the code for tokens
   return authClient.token.parseFromUrl().then(function (res) {

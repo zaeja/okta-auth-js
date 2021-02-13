@@ -139,7 +139,9 @@ function renderUnauthenticated() {
 }
 
 function handleLoginRedirect() {
-  // TODO: isInteractionRequired
+  if (authClient.isInteractionRequired()) {
+    return beginAuthFlow(); // widget will resume transaction
+  }
   
   // If the URL contains a code, `parseFromUrl` will grab it and exchange the code for tokens
   return authClient.token.parseFromUrl().then(function (res) {
@@ -386,7 +388,7 @@ function showError(error) {
 function loadConfig() {
   // Read all config from the URL
   var url = new URL(window.location.href);
-  var redirectUri = window.location.origin + '/implicit/callback'; // Should also be set in Okta Admin UI
+  var redirectUri = window.location.origin + '/login/callback'; // Should also be set in Okta Admin UI
   
   // Params which are not in the state
   var stateParam = url.searchParams.get('state');
