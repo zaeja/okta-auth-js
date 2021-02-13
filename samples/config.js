@@ -22,7 +22,7 @@ const defaults = {
 const spaDefaults = Object.assign({
   redirectPath: '/login/callback',
   flow: 'redirect',
-  scopes: 'openid email',
+  scopes: ['openid', 'email'],
   storage: 'sessionStorage',
   requireUserSession: true,
   signinForm: true,

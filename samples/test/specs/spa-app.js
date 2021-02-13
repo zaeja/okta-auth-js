@@ -3,6 +3,7 @@ import {
   startApp,
   toQueryString,
   getSampleConfig,
+  getConfig,
   loginRedirect,
   loginDirect,
   loginWidget,
@@ -10,6 +11,7 @@ import {
 } from '../util';
 
 const sampleConfig = getSampleConfig();
+const config = getConfig();
 
 describe('spa-app: ' + sampleConfig.name, () => {
 
@@ -48,6 +50,17 @@ describe('spa-app: ' + sampleConfig.name, () => {
   if (sampleConfig.signinWidget) {
     it('can login using a self-hosted widget', async () => {
       await startApp(SpaApp, { flow: 'widget', requireUserSession: true });
+      await loginWidget();
+      await SpaApp.assertUserInfo();
+      await SpaApp.logoutRedirect();
+    });
+
+    it('does not show the widget when receiving error=access_denied on redirect', async () => {
+      await startApp(SpaApp, { flow: 'widget' });
+      await browser.url(sampleConfig.redirectPath + toQueryString(Object.assign({
+        error: 'access_denied'
+      }, config)));
+
       await loginWidget();
       await SpaApp.assertUserInfo();
       await SpaApp.logoutRedirect();

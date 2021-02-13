@@ -8,11 +8,12 @@ import OktaSignIn from '@okta/okta-signin-widget';
 var config = {
   issuer: '',
   clientId: '',
-  scopes: 'openid email',
+  scopes: ['openid','email'],
   storage: 'sessionStorage',
   requireUserSession: 'true',
   flow: 'redirect',
   idps: '',
+  useInteractionCodeFlow: false,
 };
 
 var authClient;
@@ -32,6 +33,8 @@ window._getUserInfo = bindClick(getUserInfo);
 window._renewToken = bindClick(renewToken);
 window._submitSigninForm = bindClick(submitSigninForm);
 window._onChangeFlow = onChangeFlow;
+window._onSubmitForm = onSubmitForm;
+window._onFormData = onFormData;
 
 function stringify(obj) {
   // Convert false/undefined/null into "null"
@@ -48,17 +51,22 @@ loadConfig();
 main();
 
 function main() {
-  // Configuration is loaded from URL query params. If the config is not valid, show a form to set the values in the URL
-  var hasValidConfig = !!(config.issuer && config.clientId);
-  if (!hasValidConfig || config.showForm) {
+  // Configuration is loaded from URL query params. Make sure the links contain the full config
+  document.getElementById('home-link').setAttribute('href', config.appUri);
+  document.getElementById('options-link').setAttribute('href', config.appUri + '&showForm=true');
+
+  if (config.showForm) {
     showForm();
     return;
   }
 
-  // Have valid config. Update UI
-  document.getElementById('home-link').setAttribute('href', config.appUri);
-  document.getElementById('options-link').setAttribute('href', config.appUri + '&showForm=true');
+  var hasValidConfig = !!(config.issuer && config.clientId);
+  if (!hasValidConfig) {
+    showError('Click "Edit Config" and set the `issuer` and `clientId`');
+    return;
+  }
 
+  // Config is valid
   createAuthClient();
 
   // Subscribe to authState change event. Logic based on authState is done here.
@@ -132,6 +140,11 @@ function renderAuthenticated(authState) {
 function renderUnauthenticated() {
   // The user is not authenticated, the app will begin an auth flow.
   document.getElementById('auth').style.display = 'none';
+
+  // The `handleLoginRedirect` may have failed. An error or remediation should be shown.
+  if (authClient.token.isLoginRedirect()) {
+    return;
+  }
 
   // Unauthenticated state, begin an auth flow
   return beginAuthFlow();
@@ -314,7 +327,7 @@ function createAuthClient() {
       issuer: config.issuer,
       clientId: config.clientId,
       redirectUri: config.redirectUri,
-      scopes: config.scopes.split(/\s+/),
+      scopes: config.scopes,
       tokenManager: {
         storage: config.storage
       },
@@ -351,7 +364,7 @@ function showForm() {
   // Set values from config
   document.getElementById('issuer').value = config.issuer;
   document.getElementById('clientId').value = config.clientId;
-  document.getElementById('scopes').value = config.scopes;
+  document.getElementById('scopes').value = config.scopes.join(' ');
   document.getElementById('idps').value = config.idps;
   try {
     document.querySelector(`#flow [value="${config.flow || ''}"]`).selected = true;
@@ -379,7 +392,7 @@ function showForm() {
 function showError(error) {
   console.error(error);
   var node = document.createElement('DIV');
-  node.innerText = JSON.stringify(error, null, 2);
+  node.innerText = typeof error === 'string' ? error : JSON.stringify(error, null, 2);
   document.getElementById('error').appendChild(node);
 }
 
@@ -426,7 +439,7 @@ function loadConfig() {
     flow = url.searchParams.get('flow') || config.flow;
     requireUserSession = url.searchParams.get('requireUserSession') ? 
       url.searchParams.get('requireUserSession')  === 'true' : config.requireUserSession;
-    scopes = url.searchParams.get('scopes') || config.scopes;
+    scopes = url.searchParams.get('scopes') ? url.searchParams.get('scopes').split(' ') : config.scopes;
     useInteractionCodeFlow = url.searchParams.get('useInteractionCodeFlow') === 'true' || config.useInteractionCodeFlow;
     idps = url.searchParams.get('idps') || config.idps;
   }
@@ -437,7 +450,7 @@ function loadConfig() {
     storage,
     requireUserSession,
     flow,
-    scopes,
+    scopes: scopes.join(' '),
     useInteractionCodeFlow,
     idps,
   }).map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');
@@ -477,4 +490,20 @@ function loadConfig() {
     }
   });
   document.getElementById('config').innerText = stringify(logConfig);
+}
+
+// Keep us in the same tab
+function onSubmitForm(event) {
+  event.preventDefault();
+  new FormData(document.getElementById('form')); // will fire formdata event
+}
+
+function onFormData(event) {
+  let data = event.formData;
+  let params = {};
+  for (let key of data.keys()) {
+    params[key] = data.get(key);
+  }
+  const newUri = window.location.origin + '/?' + Object.entries(params).map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');
+  window.location.replace(newUri);
 }
