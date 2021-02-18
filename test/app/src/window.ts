@@ -4,12 +4,17 @@ import * as Cookies from 'js-cookie';
 
 import TestApp from './testApp';
 import { Config, getDefaultConfig, getConfigFromUrl, getConfigFromStorage, clearStorage } from './config';
+import { onSubmitForm, onFormData } from './form';
 import { toQueryString } from './util';
+import { FormDataEvent } from './types';
+import { buildWidgetConfig } from './widget';
 
 declare global {
   interface Window {
     _testApp: TestApp;
     _cookies: object;
+    onSubmitForm: (event: Event) => void;
+    onFormData: (event: FormDataEvent) => void;
     bootstrapLanding: () => void;
     bootstrapCallback: () => void;
     getWidgetConfig: () => any;
@@ -36,20 +41,13 @@ function mount(): TestApp {
 
 window.getAuthJSConfig = getDefaultConfig;
 window.toQueryString = toQueryString;
+window.onSubmitForm = onSubmitForm;
+window.onFormData = onFormData;
 
 // Login page, read config from URL
 window.getWidgetConfig = function(): any {
   const siwConfig = window.location.search ? getConfigFromUrl() : getDefaultConfig();
-  Object.assign(siwConfig, {
-    baseUrl: config.issuer.split('/oauth2')[0],
-    el: '#widget',
-    authParams: {
-      display: 'page',
-      pkce: config.pkce,
-      responseType: config.responseType
-    }
-  });
-  return siwConfig;
+  return buildWidgetConfig(siwConfig);
 };
 
 // Regular landing, read config from URL

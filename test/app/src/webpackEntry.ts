@@ -4,4 +4,4 @@
 import '@okta/okta-auth-js/polyfill';
 
 // add testApp functions to global "window"
-import './global';
+import './window';

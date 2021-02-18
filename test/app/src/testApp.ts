@@ -29,6 +29,7 @@ import { MOUNT_PATH } from './constants';
 import { htmlString, toQueryString } from './util';
 import { Form, updateForm } from './form';
 import { tokensHTML } from './tokens';
+import { buildWidgetConfig } from './widget';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const BundledOktaSignIn = require('@okta/okta-signin-widget');
@@ -274,7 +275,7 @@ class TestApp {
 
     saveConfigToStorage(this.config);
     document.getElementById('modal').style.display = 'block';
-    const widgetConfig = window.getWidgetConfig();
+    const widgetConfig = buildWidgetConfig(this.config);
     const { issuer, clientId, _clientSecret, redirectUri, _forceRedirect, scopes } = this.config;
     const state = JSON.stringify({ issuer, clientId, _clientSecret, redirectUri });
 
@@ -650,8 +651,10 @@ class TestApp {
         </li>
       </ul>
       <h4/>
-      <input name="username" id="username" placeholder="username" type="email"/>
-      <input name="password" id="password" placeholder="password" type="password"/>
+      <form>
+        <input name="username" id="username" placeholder="username" type="email"/>
+        <input name="password" id="password" placeholder="password" type="password"/>
+      </form>
       <a href="/" id="login-direct" onclick="loginDirect(event)">Login DIRECT</a>
       `;
   }

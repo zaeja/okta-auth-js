@@ -19,7 +19,7 @@ var config = {
 var authClient;
 var userInfo;
 
-// bind methods called from HTML
+// bind methods called from HTML to prevent navigation
 function bindClick(method, args) {
   return function(e) {
     e.preventDefault();
